@@ -64,13 +64,13 @@ $$
 ## local attention
 文中指出，local attention 与机器视觉领域[@gregor2015draw]等提出的 selective attention mechanism 类似。
 
-global attention 的一个缺陷是，它必须关注源句中的所有单词，这种方式代价非常昂贵并且对于翻译较长的序列比较不切实际，例如按段落或者文档翻译。为了解决这种低效问题，[@luong2015effective]提出了 local attention，它仅仅选择源句中的一个子集。
+global attention 的一个缺陷是，它必须关注源句中的所有单词，这种方式计算代价昂贵并且对于解码较长序列比较不切实际，例如按段落或者文档翻译。为了解决这种低效问题，[@luong2015effective]提出了 local attention，它仅仅选择源句中的一个子集。
 
 相比于不可微的 hard attention，local attention 是可微的[@luong2015effective]。在具体细节上，在时间步 $t$，模型首先生成一个对齐位置 $p_t$，那么上下文向量 $c_t$ 就是源句窗口 $[p_t - D, p_t + D]$ 内的隐藏状态集合的加权平均值，$D$ **根据经验选择**。与 global attention 不同，local attention 的对齐向量 $a_t$ 现在是一个固定的维度，即 $\in \mathbb{R}^{2D + 1}$。接下来将介绍两类变种。
 
 Monotonic alignment(**local-m**)：无变化对齐。我们简单地设置 $p_t = t$，假定了源句和目标句的单词是一一对应的。那么此时的 attention 计算方式其实与 global attention 一致。这种假设在真实环境中是不切实际的，但是可能有部分特殊的任务可以使用，例如序列标注。
 
-Predictive alignment(**local-p**)：模型预测对齐位置为 $p_t = S \cdot sigmoid(v^T_p tanh(W_p h_t))$
+Predictive alignment(**local-p**)：模型预测对齐位置为 $p_t = S \cdot \text{sigmoid}(v^T_p tanh(W_p h_t))$
 
 ## hard attention
 

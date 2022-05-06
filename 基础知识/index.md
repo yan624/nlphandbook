@@ -45,7 +45,7 @@
 答：CBOW 利用单词 $w_i$ 的上下文 $\text{context}(w_i)$ 预测 $w_i$ 的概率。在上下文各个词向量输入模型时，采用累加的方法。skip-gram 使用 $w_i$ 预测它的上下文，公式为 $p(\text{context}(w_i)| w_i) = \prod_{u \in \text{context}(w_i)} p(u|w_i)$。其中每个 $p(u|w_i)$ 可用 hierarchical softmax 或 negative sampling 解码，与 CBOW 类似。
 
 问：讲讲 word2vec 的两种解码算法（hierarchical softmax 和 negative sampling）。  
-答：**heirarchical softmax** 首先根据词表中每个单词的词频构造一棵哈夫曼树，每个叶节点分别代表词表中的各个单词，词频越高叶节点离根节点越近。然后，给每个**非叶节点**分配一个权重向量，用于执行二分类。模型优化的是哈弗曼编码。比如 1001 需要进行四次二分类。最后单词 $w_i$ 的条件概率 $p(w_i|\text{context}(w_i)) = \prod_d p(label_d)$，其中 $d$ 代表哈夫曼树的深度，该公式意味着将 $w_i$ 路径上的每个概率相乘。  
+答：**heirarchical softmax** 首先根据词表中每个单词的词频构造一棵哈夫曼树，每个叶结点分别代表词表中的各个单词，词频越高叶结点离根结点越近。然后，给每个**非叶结点**分配一个权重向量，用于执行二分类。模型优化的是哈弗曼编码。比如 1001 需要进行四次二分类。最后单词 $w_i$ 的条件概率 $p(w_i|\text{context}(w_i)) = \prod_d p(label_d)$，其中 $d$ 代表哈夫曼树的深度，该公式意味着将 $w_i$ 路径上的每个概率相乘。  
 **negative sampling**
 
 问：推导一遍基于 CBOW 的算法？解码方法用 heirarchical softmax。（从模型输入开始，推导到更新参数）   

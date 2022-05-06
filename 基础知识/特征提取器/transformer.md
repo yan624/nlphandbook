@@ -4,10 +4,9 @@
 
 ## Transformer通用结构
 
-将 Transformer 模型定义为函数 $y = F(x)$，其中 $y$ 是 Transformer 顶层的输出，$x$ 是底层的输入。$F(x)$ 将重复调用一个模块（称为 Transformer layer） $N$ 次，该模块又由 B 个（一般 2-3）Transformer Block 组成，表示为：
+将 Transformer 模型定义为函数 $y = F(x)$，其中 $y$ 是 Transformer 顶层的输出，$x$ 是底层的输入。$F(x)$ 将重复调用一个模块（称为 Transformer layer） N 次，该模块又由 B 个（2或3个）Transformer Block 组成。Transformer Block 可以表示为：
 
 $$
-
 a^l_i = f(x) = \text{LayerNorm}^l_i(a^{l-1}_i + \text{sublayer}^l_i(a^{l-1}_i))
 $$
 
@@ -32,17 +31,17 @@ $$
 
 ?> 由于 Transformer 不包含循环和卷积，因此为了使模型利用序列顺序，必须注入符号相对或绝对的位置信息。为此，encoder 和 decoder 底层的输入嵌入被加上了“位置编码”。有许多学好的或者固定的位置编码可供选择[[@gehring2017convolutional]](#gehring2017convolutional)。论文对比两种类别的位置编码之后，发现它们的结果非常接近。选择固定编码是因为它可以推理序列长度，以此表示比训练集中已知最长序列更长的序列。在 [get_timing_signal_1d()](https://github.com/tensorflow/tensor2tensor/blob/23bd23b9830059fbc349381b70d9429b5c40a139/tensor2tensor/layers/common_attention.py#L387) 函数中可以看到用于生成位置编码的代码。
 
-**MHA** 的计算公式如下所示，其中 $[Q, K, V] = Linear(X) \in \mathbb{R}^{<d(X)}$。
+**MHA** 的计算公式如下所示，其中 $[Q, K, V] = \text{Linear}(X) \in \mathbb{R}^{<d(X)}$。
 $$
 \begin{aligned}
-	MHA(X) & = Linear([Attn_1; \cdots; Attn_8]) \in \mathbb{R}^{d(X)} \\
-	Attn(Q, K, V) & = softmax(\frac{Q K^T}{\sqrt{d_k}}) V \in \mathbb{R}^{<d(X)} \\
+	\text{MHA}(X) & = \text{Linear}([Attn_1; \cdots; Attn_8]) \in \mathbb{R}^{d(X)} \\
+	\text{Attn}(Q, K, V) & = \text{softmax}(\frac{Q K^T}{\sqrt{d_k}}) V \in \mathbb{R}^{<d(X)} \\
 \end{aligned}
 $$
 
 **FFN** 的计算公式如下所示，其中激活函数不一定非要是 $ReLU(x) = max(0, x)$，有些论文还会用 $\text{GELU}$。
 
-$$FNN(x) = max(0, x \cdot W_1 + b_1) \cdot W_2 + b_2
+$$\text{FNN}(x) = max(0, x \cdot W_1 + b_1) \cdot W_2 + b_2
 $$
 
 值得注意的是，multi-head attention 看英文名感觉“高大上”。其实很简单，就是将 self-attention 执行多次。Transformer 执行了 8 次，因此产生 8 个向量。然而，在训练时只需要一个向量。为此，Transformer 拼接 8 个向量，再乘上一个权重矩阵，使其维度还原。

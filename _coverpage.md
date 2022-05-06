@@ -12,9 +12,8 @@
 - xxxxxxx
 
 [主页](/)
-[博客_](/)
+[机器学习](/机器学习/index)
 
 <!-- background color -->
 
 <!-- ![color](#fbb30b) -->
-

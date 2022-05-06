@@ -1,9 +1,9 @@
-seq2seq 是语言生成任务中的一个重要架构，它可以应用在 NLP 的各种任务之上，例如语义解析、神经机器翻译、对话系统等。Seq2Seq 模型于 2014 年由 Bengio 团队[[@Cho_2014]](https://arxiv.org/pdf/1406.1078.pdf 'Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation')首先提出，同年，google 团队[[@sutskever2014sequence]](https://arxiv.org/pdf/1409.3215.pdf 'Sequence to Sequence Learning with Neural Networks')做其做出改进。二者结构如下图所示：
+seq2seq 是自然语言生成任务中的一个重要结构，是编码器解码器架构中的一员，它可以应用在 NLP 的多种任务之上，例如语义解析、神经机器翻译、对话系统等。Seq2Seq 模型于 2014 年由 Bengio 团队[[@Cho_2014]](https://arxiv.org/pdf/1406.1078.pdf 'Learning Phrase Representations using RNN Encoder–Decoder for Statistical Machine Translation')首先提出，同年，google 团队[[@sutskever2014sequence]](https://arxiv.org/pdf/1409.3215.pdf 'Sequence to Sequence Learning with Neural Networks')做其做出改进。二者结构如下图所示：
 
 ![Cho seq2seq](https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Cho%20seq2seq.png 'Cho seq2seq')
 ![Sutskever seq2seq](https://blog-content-1256924128.cos.ap-shanghai.myqcloud.com/zcy/深度学习算法（三）：RNN%20各种机制/Sutskever%20seq2seq.png 'Sutskever seq2seq :size=50%')
 
-**目前常用的是由 google 团队 Sutskever 等人提出的架构**。下面对比二者的区别。**从结构上看**，二者的 encoder 几乎一样，只是 decoder 有所不同。对于第一种结构，decoder 的每个时间步都接收 encoder 最后一个时间步的隐藏状态；对于第二种结构，每个时间步只是接收上个时间步的隐藏状态。**从编码器类型上看**，前者使用 simple RNN，后者使用 4-layer bi-LSTM。RNN 的缺点众所周知，好奇的是这篇论文在发表的时候，为什么不用 LSTM，那时 LSTM 应该已经流行了。
+**目前常用的是由 google 团队 Sutskever 等人提出的结构（右图）**。下面对比二者的区别。**从结构上看**，二者的 encoder 几乎一样，只是 decoder 有所不同。对于第一种结构，decoder 的每个时间步都接收 encoder 最后一个时间步的隐藏状态；对于第二种结构，每个时间步只是接收上个时间步的隐藏状态。**从编码器类型上看**，前者使用 simple RNN，后者使用 4-layer bi-LSTM。RNN 的缺点众所周知，好奇的是这篇论文在发表的时候，为什么不用 LSTM，那时 LSTM 应该已经流行了。
 
 除了这些，观察 Cho seq2seq 和 attention 可以发现，**Cho seq2seq 和 attention 类似除了隐藏状态 $h$ 和输入值 $x$ 还需要一个上下文向量 $c$。只不过 Cho seq2seq 的 $c$ 是编码器的最后一个隐藏状态，而 attention 的 $c$ 是编码器各个时间步输出的加权平均**。如果移除两个模型的 $c$ 就变成了 Sutskever seq2seq。
 
@@ -35,7 +35,7 @@ seq2seq 具有两种训练方式：1）free-running；2）teacher-forcing。**�
 
 **teacher-foring 就是为了解决这一问题而提出的**【[1](https://blog.csdn.net/qq_30219017/article/details/89090690)】。根据字面意思，这种方法就好像“老师在教导学生一样”，每个时间步的输入不再是上一个时间步的输出，而是真实的 target。例如 $t-1$ 步时，预测值为“i”，我们假设真实值为“we”，那么在 $t$ 步时，RNN 的输入不是“i”的词向量，而是直接输入“we”的词向量。这跟老师在纠正学生的错误一样。
 
-teacher-forcing 是一个快速且高效的训练方式，但是当生成的序列与模型在训练过程中看到的不同时，这种方法会在实际使用时导致模型特别**脆弱**或者**有所限制**【[2](https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/)】。目前有一些解决办法：1）Beam Search；2）Curriculum Learning；3）……
+teacher-forcing 是一个快速且高效的训练方式，但是当待生成的序列与模型在训练过程中看到的不同时，就会导致模型特别**脆弱**或者**有所限制**【[2](https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/)】。目前有一些解决办法：1）Beam Search；2）Curriculum Learning；3）……
 
 ## Scheduled Sampling
 Scheduled Sampling 由 [@bengio2015scheduled] 首次提出，这是一种 Curriculum learning 策略。
