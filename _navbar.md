@@ -1,4 +1,4 @@
-- [博客](https://yan624.github.io/)
+- [博客](https://yan624.github.io/yorz)
 - [算法](https://github.com/yan624/myleetcode_biji)
 - 小册
 	+ [小册索引](#)
